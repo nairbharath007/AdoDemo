@@ -13,23 +13,34 @@ namespace AdoDemo
         static void Main(string[] args)
         {
             string path = ConfigurationManager.AppSettings["connectionString"];
-/*            Console.WriteLine(path);
-*/
+            /*            Console.WriteLine(path);
+            */
             //create a connection object
-            SqlConnection conn = new SqlConnection(path);
+            using (SqlConnection conn = new SqlConnection(path))
+            {
+                //open connection
+                conn.Open();
 
-            //open connection
-            conn.Open();
+                //tasks
+                /*Console.WriteLine("State: " + conn.State);
+                Console.WriteLine("Server Name: " + conn.DataSource);
+                Console.WriteLine("Database Name: " + conn.Database);
+                Console.WriteLine("TimeOut: " + conn.ConnectionTimeout);*/
 
-            //tasks
-            Console.WriteLine("State: "+conn.State);
-            Console.WriteLine("Server Name: " + conn.DataSource);
-            Console.WriteLine("Database Name: " + conn.Database);
-            Console.WriteLine("TimeOut: " + conn.ConnectionTimeout);
+                Console.WriteLine("Enter empno: ");
+                string empno = Console.ReadLine();
 
-            //close connection
-            conn.Close();
-            Console.WriteLine("State: " + conn.State);
+                var query = "SELECT ENAME FROM EMP WHERE EMPNO=" + empno;
+
+                //command object --> query, db details
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                SqlDataReader dr = cmd.ExecuteReader();
+                while(dr.Read())
+                {
+                    Console.WriteLine("EMPLOYEE Name is:"+ dr["ename"]);
+                }
+            }// conn object is auto disposed
         }
     }
 }
